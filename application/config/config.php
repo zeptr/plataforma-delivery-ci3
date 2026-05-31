@@ -24,16 +24,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 /*
-| Detecção automática e fiável do base_url — funciona em qualquer ambiente
-| sem edição manual: XAMPP na raiz, XAMPP numa subpasta (ex.: /delivery) e
-| servidor embutido do PHP (php -S, mantém o porto). Inclui o porto e a
-| subpasta correctos a partir de $_SERVER.
+| Detecção do base_url — funciona em qualquer ambiente sem edição manual:
+| XAMPP na raiz, XAMPP numa subpasta (ex.: /delivery) e servidor embutido
+| do PHP (php -S, mantém o porto).
+|
+| SEGURANÇA: o cabeçalho Host (HTTP_HOST) é controlável pelo cliente, pelo
+| que NÃO é confiado cegamente (evita Host Header Injection / envenenamento
+| de ligações, ex.: recuperação de senha). Ordem de prioridade:
+|   1) variável de ambiente APP_BASE_URL (recomendado em produção);
+|   2) auto-detecção, mas apenas para hosts LOCAIS (cenário desta aplicação).
+| Para um host não-local e sem APP_BASE_URL, o base_url fica vazio e o
+| CodeIgniter usa ligações relativas em vez de confiar no cabeçalho.
 */
 $config['base_url'] = '';
-if (isset($_SERVER['HTTP_HOST'])) {
-	$protocolo = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ? 'https' : 'http';
-	$pasta = trim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
-	$config['base_url'] = $protocolo . '://' . $_SERVER['HTTP_HOST'] . '/' . ($pasta !== '' ? $pasta . '/' : '');
+if ($url_ambiente = getenv('APP_BASE_URL')) {
+	$config['base_url'] = rtrim($url_ambiente, '/') . '/';
+} elseif (isset($_SERVER['HTTP_HOST'])) {
+	$host_sem_porto = strtolower(explode(':', $_SERVER['HTTP_HOST'])[0]);
+	$e_local = in_array($host_sem_porto, ['localhost', '127.0.0.1', '::1', 'host.docker.internal'], true)
+		|| substr($host_sem_porto, -6) === '.local'
+		|| (bool) preg_match('/^(10|127)\./', $host_sem_porto)
+		|| (bool) preg_match('/^192\.168\./', $host_sem_porto)
+		|| (bool) preg_match('/^172\.(1[6-9]|2[0-9]|3[01])\./', $host_sem_porto);
+	if ($e_local) {
+		$protocolo = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ? 'https' : 'http';
+		$pasta = trim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+		$config['base_url'] = $protocolo . '://' . $_SERVER['HTTP_HOST'] . '/' . ($pasta !== '' ? $pasta . '/' : '');
+	}
 }
 
 /*

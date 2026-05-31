@@ -23,7 +23,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost:8080/';
+/*
+| Detecção automática e fiável do base_url — funciona em qualquer ambiente
+| sem edição manual: XAMPP na raiz, XAMPP numa subpasta (ex.: /delivery) e
+| servidor embutido do PHP (php -S, mantém o porto). Inclui o porto e a
+| subpasta correctos a partir de $_SERVER.
+*/
+$config['base_url'] = '';
+if (isset($_SERVER['HTTP_HOST'])) {
+	$protocolo = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') ? 'https' : 'http';
+	$pasta = trim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+	$config['base_url'] = $protocolo . '://' . $_SERVER['HTTP_HOST'] . '/' . ($pasta !== '' ? $pasta . '/' : '');
+}
 
 /*
 |--------------------------------------------------------------------------

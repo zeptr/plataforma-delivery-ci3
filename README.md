@@ -101,8 +101,10 @@ As transições são validadas centralmente em
 ## 4. Instalação
 
 > **Esta aplicação NÃO precisa de estar publicada online.** Corre localmente em
-> qualquer máquina com XAMPP (ou PHP + MySQL). Quem receber o código não precisa
-> de nenhuma base de dados pré-existente — o instalador cria tudo.
+> qualquer máquina com XAMPP (ou PHP + MySQL) — **Windows, macOS ou Linux**.
+> Quem receber o código não precisa de nenhuma base de dados pré-existente nem
+> de editar configurações: o `base_url` é detectado automaticamente e o
+> instalador cria toda a base de dados.
 
 ### 4.1 Instalação rápida — 1 clique (recomendado)
 

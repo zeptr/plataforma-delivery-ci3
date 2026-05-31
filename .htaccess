@@ -1,0 +1,22 @@
+# =====================================================================
+#  Reescrita de URLs para o CodeIgniter (Apache / XAMPP)
+#  Remove o "index.php" dos endereços e encaminha os pedidos para o
+#  front controller. Ficheiros reais (assets, imagens) são servidos
+#  directamente. Funciona na raiz ou numa subpasta (ex.: /delivery/).
+# =====================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Não reescrever ficheiros ou pastas que existam (assets, uploads, etc.)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Encaminhar tudo o resto para o front controller
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    # Sem mod_rewrite: usar o index.php como fallback de erro
+    ErrorDocument 404 /index.php
+</IfModule>

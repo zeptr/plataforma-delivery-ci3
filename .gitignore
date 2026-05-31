@@ -1,0 +1,17 @@
+# Sessões e cache do CodeIgniter
+application/cache/*
+!application/cache/index.html
+application/logs/*
+!application/logs/index.html
+
+# Uploads de utilizadores (manter as pastas, ignorar conteúdo)
+assets/uploads/**/*
+!assets/uploads/index.html
+!assets/uploads/produtos/
+!assets/uploads/lojas/
+!assets/uploads/entregadores/
+
+# Ferramentas / ambiente
+.playwright-mcp/
+*.log
+.DS_Store
